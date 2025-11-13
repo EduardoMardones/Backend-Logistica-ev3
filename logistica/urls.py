@@ -102,7 +102,7 @@ urlpatterns = [
     path('despachos/<int:pk>/eliminar/', views.DespachoDeleteView.as_view(), name='despacho-delete'),
     
     # ==================== API REST (con prefijo /api/) ====================
-    path('api/', include(router.urls)),
+    path('api/', include((router.urls, 'transporte_api'), namespace='api')),
     
     # ==================== DOCUMENTACIÓN API ====================
     # Swagger UI

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Cargas - Logística Global{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h1 class="card-title" style="margin-bottom: 0;">Cargas</h1>
+        <a href="{% url 'carga-create' %}" class="btn btn-primary">📦 Nuevo/a Carga</a>
+    </div>
+
+    {% if cargas %}
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descripción</th>
+                    <th>Peso (kg)</th>
+                    <th>Volumen (m³)</th>
+                    <th>Cliente</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for carga in cargas %}
+                <tr>
+                    <td>{{ carga.id }}</td>
+                    <td><strong>{{ carga.descripcion|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ carga.peso_kg|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ carga.volumen_m3|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ carga.cliente|default:'No especificado' }}</strong></td>
+                    <td>
+                        <a href="{% url 'carga-update' carga.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">✏️ Editar</a>
+                        <a href="{% url 'carga-delete' carga.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">🗑️ Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-secondary">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Anterior</a>
+        {% endif %}
+
+        <span style="padding: 0.75rem 1.5rem; background-color: var(--primary-color); color: white; border-radius: 5px;">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Última</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div style="text-align: center; padding: 3rem; background-color: var(--bg-light); border-radius: 8px;">
+        <p style="font-size: 1.2rem; color: var(--text-light);">No hay cargas registrados</p>
+        <a href="{% url 'carga-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primer/a carga</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

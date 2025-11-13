@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Conductores - Logística Global{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h1 class="card-title" style="margin-bottom: 0;">Conductores</h1>
+        <a href="{% url 'conductor-create' %}" class="btn btn-primary">👨‍✈️ Nuevo/a Conductor</a>
+    </div>
+
+    {% if conductors %}
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>RUT</th>
+                    <th>Licencia</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conductor in conductors %}
+                <tr>
+                    <td>{{ conductor.id }}</td>
+                    <td><strong>{{ conductor.nombre|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ conductor.rut|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ conductor.licencia|default:'No especificado' }}</strong></td>
+                    <td>
+                        {% if conductor.activo %}
+                            <span style="background-color: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">Activo</span>
+                        {% else %}
+                            <span style="background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'conductor-update' conductor.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">✏️ Editar</a>
+                        <a href="{% url 'conductor-delete' conductor.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">🗑️ Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-secondary">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Anterior</a>
+        {% endif %}
+
+        <span style="padding: 0.75rem 1.5rem; background-color: var(--primary-color); color: white; border-radius: 5px;">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Última</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div style="text-align: center; padding: 3rem; background-color: var(--bg-light); border-radius: 8px;">
+        <p style="font-size: 1.2rem; color: var(--text-light);">No hay conductores registrados</p>
+        <a href="{% url 'conductor-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primer/a conductor</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

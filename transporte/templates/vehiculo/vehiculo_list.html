@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Vehículos - Logística Global{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h1 class="card-title" style="margin-bottom: 0;">Vehículos</h1>
+        <a href="{% url 'vehiculo-create' %}" class="btn btn-primary">🚚 Nuevo/a Vehículo</a>
+    </div>
+
+    {% if vehiculos %}
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patente</th>
+                    <th>Tipo</th>
+                    <th>Capacidad (kg)</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehiculo in vehiculos %}
+                <tr>
+                    <td>{{ vehiculo.id }}</td>
+                    <td><strong>{{ vehiculo.patente|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ vehiculo.tipo_vehiculo|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ vehiculo.capacidad_kg|default:'No especificado' }}</strong></td>
+                    <td>
+                        {% if vehiculo.activo %}
+                            <span style="background-color: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">Activo</span>
+                        {% else %}
+                            <span style="background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'vehiculo-update' vehiculo.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">✏️ Editar</a>
+                        <a href="{% url 'vehiculo-delete' vehiculo.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">🗑️ Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-secondary">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Anterior</a>
+        {% endif %}
+
+        <span style="padding: 0.75rem 1.5rem; background-color: var(--primary-color); color: white; border-radius: 5px;">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Última</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div style="text-align: center; padding: 3rem; background-color: var(--bg-light); border-radius: 8px;">
+        <p style="font-size: 1.2rem; color: var(--text-light);">No hay vehículos registrados</p>
+        <a href="{% url 'vehiculo-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primer/a vehículo</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

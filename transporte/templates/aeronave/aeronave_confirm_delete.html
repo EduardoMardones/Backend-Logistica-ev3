@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Aeronave - Logística Global{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="card-title" style="color: var(--danger);">🗑️ Confirmar Eliminación</h1>
+
+    <div style="background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 1.5rem; border-radius: 5px; margin: 2rem 0;">
+        <h3 style="color: #991b1b; margin-bottom: 1rem;">⚠️ Advertencia</h3>
+        <p style="color: #7f1d1d; font-size: 1.1rem;">
+            ¿Está seguro que desea eliminar el/la siguiente aeronave?
+        </p>
+    </div>
+
+    <div style="background-color: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 0.75rem; font-weight: bold; width: 200px;">ID:</td>
+                <td style="padding: 0.75rem;">{{ object.id|default:"No especificado" }}</td>
+            </tr>
+            <tr style="background-color: white;">
+                <td style="padding: 0.75rem; font-weight: bold; width: 200px;">Matrícula:</td>
+                <td style="padding: 0.75rem;">{{ object.matricula|default:"No especificado" }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 0.75rem; font-weight: bold; width: 200px;">Tipo:</td>
+                <td style="padding: 0.75rem;">{{ object.tipo_aeronave|default:"No especificado" }}</td>
+            </tr>
+            <tr style="background-color: white;">
+                <td style="padding: 0.75rem; font-weight: bold; width: 200px;">Capacidad (kg):</td>
+                <td style="padding: 0.75rem;">{{ object.capacidad_kg|default:"No especificado" }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 0.75rem; font-weight: bold; width: 200px;">Estado:</td>
+                <td style="padding: 0.75rem;">
+                    {% if object.activo %}
+                        <span style="color: var(--success);">✓ Activo</span>
+                    {% else %}
+                        <span style="color: var(--danger);">✗ Inactivo</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <p style="color: var(--text-light); margin: 1.5rem 0;">
+        Esta acción no se puede deshacer. Todos los datos relacionados se eliminarán permanentemente.
+    </p>
+
+    <form method="post" style="display: inline;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-danger">🗑️ Sí, Eliminar</button>
+            <a href="{% url 'aeronave-list' %}" class="btn btn-secondary">❌ Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

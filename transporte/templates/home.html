@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Logística Global Ltda.{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="card-title">Bienvenido a Logística Global Ltda.</h1>
+    <p style="font-size: 1.1rem; color: var(--text-light); margin-bottom: 2rem;">
+        Sistema integral de gestión de transporte terrestre y aéreo
+    </p>
+
+    <!-- Estadísticas -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        <div style="background: linear-gradient(135deg, #3b82f6, #1e3a8a); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 3rem; font-weight: bold;">{{ total_vehiculos }}</div>
+            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Vehículos Activos</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 3rem; font-weight: bold;">{{ total_aeronaves }}</div>
+            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Aeronaves Activas</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 3rem; font-weight: bold;">{{ total_conductores }}</div>
+            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Conductores</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 3rem; font-weight: bold;">{{ total_pilotos }}</div>
+            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Pilotos</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 3rem; font-weight: bold;">{{ total_despachos }}</div>
+            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Total Despachos</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #ec4899, #db2777); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 3rem; font-weight: bold;">{{ despachos_pendientes }}</div>
+            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Despachos Pendientes</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Accesos Rápidos</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+        <a href="/despachos/crear/" class="btn btn-primary" style="text-align: center;">➕ Nuevo Despacho</a>
+        <a href="/vehiculos/" class="btn btn-secondary" style="text-align: center;">🚚 Ver Vehículos</a>
+        <a href="/aeronaves/" class="btn btn-secondary" style="text-align: center;">✈️ Ver Aeronaves</a>
+        <a href="/clientes/" class="btn btn-secondary" style="text-align: center;">👥 Ver Clientes</a>
+    </div>
+</div>
+<div class="card">
+    <h2 class="card-title">Sobre el Sistema</h2>
+    <p style="line-height: 1.8; color: var(--text-light);">
+        Logística Global Ltda. ofrece una plataforma completa para la gestión de operaciones de transporte. 
+        Nuestro sistema permite administrar flotas terrestres y aéreas, gestionar personal operativo, 
+        controlar rutas y realizar seguimiento detallado de cada despacho.
+    </p>
+    <div style="margin-top: 1.5rem;">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Características principales:</h3>
+        <ul style="list-style-position: inside; color: var(--text-light); line-height: 2;">
+            <li>Gestión integral de vehículos y aeronaves</li>
+            <li>Control de conductores y pilotos certificados</li>
+            <li>Administración de rutas terrestres y aéreas</li>
+            <li>Seguimiento de despachos en tiempo real</li>
+            <li>Registro detallado de cargas y clientes</li>
+            <li>API REST para integración con otros sistemas</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

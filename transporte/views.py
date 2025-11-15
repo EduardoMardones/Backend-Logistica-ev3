@@ -1,11 +1,12 @@
 # transporte/views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.shortcuts import render
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.views import FilterView
 
 from .models import (
     Ruta, Vehiculo, Aeronave, Conductor, Piloto,
@@ -15,6 +16,10 @@ from .serializers import (
     RutaSerializer, VehiculoSerializer, AeronaveSerializer, 
     ConductorSerializer, PilotoSerializer, ClienteSerializer, 
     CargaSerializer, DespachoSerializer
+)
+from .filters import (
+    RutaFilter, VehiculoFilter, AeronaveFilter, ConductorFilter,
+    PilotoFilter, ClienteFilter, CargaFilter, DespachoFilter
 )
 
 # ==================== VISTAS DE TEMPLATES ====================
@@ -31,12 +36,25 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+# ==================== CLASE BASE PARA LISTAS CON FILTROS Y ORDENAMIENTO ====================
+class BaseFilteredListView(FilterView):
+    """Vista base con filtros y ordenamiento"""
+    paginate_by = 10
+    
+    def get_ordering(self):
+        return self.request.GET.get('ordering', 'id')
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        ordering = self.get_ordering()
+        return queryset.order_by(ordering)
+
 # ==================== VISTAS PARA RUTA ====================
-class RutaListView(ListView):
+class RutaListView(BaseFilteredListView):
     model = Ruta
     template_name = 'ruta/ruta_list.html'
     context_object_name = 'rutas'
-    paginate_by = 10
+    filterset_class = RutaFilter
 
 class RutaCreateView(LoginRequiredMixin, CreateView):
     model = Ruta
@@ -56,11 +74,11 @@ class RutaDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('ruta-list')
 
 # ==================== VISTAS PARA VEHICULO ====================
-class VehiculoListView(ListView):
+class VehiculoListView(BaseFilteredListView):
     model = Vehiculo
     template_name = 'vehiculo/vehiculo_list.html'
     context_object_name = 'vehiculos'
-    paginate_by = 10
+    filterset_class = VehiculoFilter
 
 class VehiculoCreateView(LoginRequiredMixin, CreateView):
     model = Vehiculo
@@ -80,11 +98,11 @@ class VehiculoDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('vehiculo-list')
 
 # ==================== VISTAS PARA AERONAVE ====================
-class AeronaveListView(ListView):
+class AeronaveListView(BaseFilteredListView):
     model = Aeronave
     template_name = 'aeronave/aeronave_list.html'
     context_object_name = 'aeronaves'
-    paginate_by = 10
+    filterset_class = AeronaveFilter
 
 class AeronaveCreateView(LoginRequiredMixin, CreateView):
     model = Aeronave
@@ -104,11 +122,11 @@ class AeronaveDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('aeronave-list')
 
 # ==================== VISTAS PARA CONDUCTOR ====================
-class ConductorListView(LoginRequiredMixin, ListView):
+class ConductorListView(LoginRequiredMixin, BaseFilteredListView):
     model = Conductor
     template_name = 'conductor/conductor_list.html'
     context_object_name = 'conductores'
-    paginate_by = 10
+    filterset_class = ConductorFilter
 
 class ConductorCreateView(LoginRequiredMixin, CreateView):
     model = Conductor
@@ -128,11 +146,11 @@ class ConductorDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('conductor-list')
 
 # ==================== VISTAS PARA PILOTO ====================
-class PilotoListView(LoginRequiredMixin, ListView):
+class PilotoListView(LoginRequiredMixin, BaseFilteredListView):
     model = Piloto
     template_name = 'piloto/piloto_list.html'
     context_object_name = 'pilotos'
-    paginate_by = 10
+    filterset_class = PilotoFilter
 
 class PilotoCreateView(LoginRequiredMixin, CreateView):
     model = Piloto
@@ -152,11 +170,11 @@ class PilotoDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('piloto-list')
 
 # ==================== VISTAS PARA CLIENTE ====================
-class ClienteListView(ListView):
+class ClienteListView(BaseFilteredListView):
     model = Cliente
     template_name = 'cliente/cliente_list.html'
     context_object_name = 'clientes'
-    paginate_by = 10
+    filterset_class = ClienteFilter
 
 class ClienteCreateView(LoginRequiredMixin, CreateView):
     model = Cliente
@@ -176,11 +194,11 @@ class ClienteDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('cliente-list')
 
 # ==================== VISTAS PARA CARGA ====================
-class CargaListView(LoginRequiredMixin, ListView):
+class CargaListView(LoginRequiredMixin, BaseFilteredListView):
     model = Carga
     template_name = 'carga/carga_list.html'
     context_object_name = 'cargas'
-    paginate_by = 10
+    filterset_class = CargaFilter
 
 class CargaCreateView(LoginRequiredMixin, CreateView):
     model = Carga
@@ -200,11 +218,11 @@ class CargaDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('carga-list')
 
 # ==================== VISTAS PARA DESPACHO ====================
-class DespachoListView(LoginRequiredMixin, ListView):
+class DespachoListView(LoginRequiredMixin, BaseFilteredListView):
     model = Despacho
     template_name = 'despacho/despacho_list.html'
     context_object_name = 'despachos'
-    paginate_by = 10
+    filterset_class = DespachoFilter
 
 class DespachoCreateView(LoginRequiredMixin, CreateView):
     model = Despacho
@@ -227,65 +245,63 @@ class DespachoDeleteView(LoginRequiredMixin, DeleteView):
 
 # ==================== VIEWSETS DE API REST ====================
 
-# Base para ViewSets que no requieren autenticación estricta
 class BaseViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
 
-# ViewSet para Rutas
 class RutaViewSet(BaseViewSet):
     queryset = Ruta.objects.all()
     serializer_class = RutaSerializer
     filterset_fields = ['tipo_transporte', 'origen', 'destino']
     search_fields = ['origen', 'destino']
+    ordering_fields = ['id', 'origen', 'destino', 'distancia_km']
     permission_classes = [permissions.IsAuthenticated]
 
-# ViewSet para Vehículos
 class VehiculoViewSet(BaseViewSet):
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
     filterset_fields = ['tipo_vehiculo', 'activo']
     search_fields = ['patente']
+    ordering_fields = ['id', 'patente', 'capacidad_kg']
 
-# ViewSet para Aeronaves
 class AeronaveViewSet(BaseViewSet):
     queryset = Aeronave.objects.all()
     serializer_class = AeronaveSerializer
     filterset_fields = ['tipo_aeronave', 'activo']
     search_fields = ['matricula']
+    ordering_fields = ['id', 'matricula', 'capacidad_kg']
 
-# ViewSet para Conductores
 class ConductorViewSet(BaseViewSet):
     queryset = Conductor.objects.all()
     serializer_class = ConductorSerializer
     filterset_fields = ['activo']
     search_fields = ['nombre', 'rut', 'licencia']
+    ordering_fields = ['id', 'nombre']
     permission_classes = [permissions.IsAuthenticated]
 
-# ViewSet para Pilotos
 class PilotoViewSet(BaseViewSet):
     queryset = Piloto.objects.all()
     serializer_class = PilotoSerializer
     filterset_fields = ['activo']
     search_fields = ['nombre', 'rut', 'certificacion']
+    ordering_fields = ['id', 'nombre']
     permission_classes = [permissions.IsAuthenticated]
 
-# ViewSet para Clientes
 class ClienteViewSet(BaseViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     filterset_fields = ['rut']
     search_fields = ['nombre', 'rut', 'correo_electronico']
+    ordering_fields = ['id', 'nombre']
 
-# ViewSet para Cargas
 class CargaViewSet(BaseViewSet):
     queryset = Carga.objects.all()
     serializer_class = CargaSerializer
     filterset_fields = ['cliente', 'peso_kg']
     search_fields = ['descripcion']
+    ordering_fields = ['id', 'peso_kg', 'volumen_m3']
     permission_classes = [permissions.IsAuthenticated]
 
-# ViewSet para Despachos
 class DespachoViewSet(BaseViewSet):
     queryset = Despacho.objects.all()
     serializer_class = DespachoSerializer
@@ -294,6 +310,7 @@ class DespachoViewSet(BaseViewSet):
         'vehiculo', 'aeronave', 'carga', 'fecha_despacho'
     ]
     search_fields = ['estado']
+    ordering_fields = ['id', 'fecha_despacho', 'costo_envio']
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):

@@ -6,7 +6,36 @@
 <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h1 class="card-title" style="margin-bottom: 0;">Cargas</h1>
-        <a href="{% url 'carga-create' %}" class="btn btn-primary">📦 Nuevo/a Carga</a>
+        <a href="{% url 'carga-create' %}" class="btn btn-primary">📦 Nueva Carga</a>
+    </div>
+
+    <!-- PANEL DE FILTROS -->
+    <div style="background-color: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🔍 Filtros de Búsqueda</h3>
+        <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            {{ filter.form.as_p }}
+            <div style="display: flex; align-items: flex-end; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="/cargas/" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- ORDENAMIENTO -->
+    <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <strong>Ordenar por:</strong>
+        <a href="?ordering=id{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">ID</a>
+        <a href="?ordering=descripcion{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Descripción</a>
+        <a href="?ordering=peso_kg{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Peso ↑</a>
+        <a href="?ordering=-peso_kg{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Peso ↓</a>
+        <a href="?ordering=volumen_m3{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Volumen ↑</a>
+        <a href="?ordering=-volumen_m3{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Volumen ↓</a>
     </div>
 
     {% if cargas %}
@@ -26,10 +55,18 @@
                 {% for carga in cargas %}
                 <tr>
                     <td>{{ carga.id }}</td>
-                    <td><strong>{{ carga.descripcion|default:'No especificado' }}</strong></td>
-                    <td><strong>{{ carga.peso_kg|default:'No especificado' }}</strong></td>
-                    <td><strong>{{ carga.volumen_m3|default:'No especificado' }}</strong></td>
-                    <td><strong>{{ carga.cliente|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ carga.descripcion|default:'Sin descripción' }}</strong></td>
+                    <td>{{ carga.peso_kg|floatformat:2 }}</td>
+                    <td>{{ carga.volumen_m3|floatformat:2|default:'N/A' }}</td>
+                    <td>
+                        {% if carga.cliente %}
+                            <span style="background-color: #3b82f6; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                                {{ carga.cliente.nombre }}
+                            </span>
+                        {% else %}
+                            <span style="color: var(--text-light);">Sin cliente</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'carga-update' carga.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">✏️ Editar</a>
                         <a href="{% url 'carga-delete' carga.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">🗑️ Eliminar</a>
@@ -40,11 +77,17 @@
         </table>
     </div>
 
+    <!-- Información de resultados -->
+    <div style="margin-top: 1rem; color: var(--text-light);">
+        Mostrando {{ cargas|length }} de {{ paginator.count }} cargas
+    </div>
+
+    <!-- Paginación -->
     {% if is_paginated %}
     <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
         {% if page_obj.has_previous %}
-            <a href="?page=1" class="btn btn-secondary">Primera</a>
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Anterior</a>
+            <a href="?page=1&{{ request.GET.urlencode }}" class="btn btn-secondary">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}" class="btn btn-secondary">Anterior</a>
         {% endif %}
 
         <span style="padding: 0.75rem 1.5rem; background-color: var(--primary-color); color: white; border-radius: 5px;">
@@ -52,17 +95,40 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Siguiente</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Última</a>
+            <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}" class="btn btn-secondary">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode }}" class="btn btn-secondary">Última</a>
         {% endif %}
     </div>
     {% endif %}
 
     {% else %}
     <div style="text-align: center; padding: 3rem; background-color: var(--bg-light); border-radius: 8px;">
-        <p style="font-size: 1.2rem; color: var(--text-light);">No hay cargas registrados</p>
-        <a href="{% url 'carga-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primer/a carga</a>
+        <p style="font-size: 1.2rem; color: var(--text-light);">No se encontraron cargas con los filtros aplicados</p>
+        <a href="/cargas/" class="btn btn-secondary" style="margin-top: 1rem;">Limpiar filtros</a>
+        <a href="{% url 'carga-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primera carga</a>
     </div>
     {% endif %}
 </div>
+
+<style>
+    /* Estilos para el formulario de filtros */
+    form p {
+        margin-bottom: 0;
+    }
+    form p label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    form p input[type="text"],
+    form p input[type="number"],
+    form p select {
+        width: 100%;
+    }
+    form p input[type="checkbox"] {
+        width: auto;
+        margin-right: 0.5rem;
+    }
+</style>
 {% endblock %}

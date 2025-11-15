@@ -6,7 +6,36 @@
 <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h1 class="card-title" style="margin-bottom: 0;">Despachos</h1>
-        <a href="{% url 'despacho-create' %}" class="btn btn-primary">📋 Nuevo/a Despacho</a>
+        <a href="{% url 'despacho-create' %}" class="btn btn-primary">📋 Nuevo Despacho</a>
+    </div>
+
+    <!-- PANEL DE FILTROS -->
+    <div style="background-color: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🔍 Filtros de Búsqueda</h3>
+        <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            {{ filter.form.as_p }}
+            <div style="display: flex; align-items: flex-end; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="/despachos/" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- ORDENAMIENTO -->
+    <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <strong>Ordenar por:</strong>
+        <a href="?ordering=id{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">ID</a>
+        <a href="?ordering=fecha_despacho{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Fecha ↑</a>
+        <a href="?ordering=-fecha_despacho{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Fecha ↓</a>
+        <a href="?ordering=estado{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Estado</a>
+        <a href="?ordering=costo_envio{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Costo ↑</a>
+        <a href="?ordering=-costo_envio{% for key, value in request.GET.items %}{% if key != 'ordering' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+           class="btn btn-secondary" style="padding: 0.5rem 1rem;">Costo ↓</a>
     </div>
 
     {% if despachos %}
@@ -19,6 +48,7 @@
                     <th>Estado</th>
                     <th>Costo</th>
                     <th>Ruta</th>
+                    <th>Transporte</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -26,10 +56,41 @@
                 {% for despacho in despachos %}
                 <tr>
                     <td>{{ despacho.id }}</td>
-                    <td><strong>{{ despacho.fecha_despacho|default:'No especificado' }}</strong></td>
-                    <td><strong>{{ despacho.estado|default:'No especificado' }}</strong></td>
-                    <td><strong>{{ despacho.costo_envio|default:'No especificado' }}</strong></td>
-                    <td><strong>{{ despacho.ruta|default:'No especificado' }}</strong></td>
+                    <td><strong>{{ despacho.fecha_despacho|date:"d/m/Y" }}</strong></td>
+                    <td>
+                        {% if despacho.estado == 'PENDIENTE' %}
+                            <span style="background-color: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">⏳ Pendiente</span>
+                        {% elif despacho.estado == 'EN_RUTA' %}
+                            <span style="background-color: #3b82f6; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">🚚 En Ruta</span>
+                        {% elif despacho.estado == 'ENTREGADO' %}
+                            <span style="background-color: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">✓ Entregado</span>
+                        {% elif despacho.estado == 'CANCELADO' %}
+                            <span style="background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">✗ Cancelado</span>
+                        {% else %}
+                            {{ despacho.estado }}
+                        {% endif %}
+                    </td>
+                    <td><strong>${{ despacho.costo_envio|floatformat:0|default:'N/A' }}</strong></td>
+                    <td>
+                        {% if despacho.ruta %}
+                            <span style="font-size: 0.85rem;">{{ despacho.ruta.origen }} → {{ despacho.ruta.destino }}</span>
+                        {% else %}
+                            <span style="color: var(--text-light);">Sin ruta</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if despacho.vehiculo %}
+                            <span style="background-color: #3b82f6; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                                🚚 {{ despacho.vehiculo.patente }}
+                            </span>
+                        {% elif despacho.aeronave %}
+                            <span style="background-color: #8b5cf6; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                                ✈️ {{ despacho.aeronave.matricula }}
+                            </span>
+                        {% else %}
+                            <span style="color: var(--text-light);">Sin asignar</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'despacho-update' despacho.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">✏️ Editar</a>
                         <a href="{% url 'despacho-delete' despacho.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">🗑️ Eliminar</a>
@@ -40,11 +101,17 @@
         </table>
     </div>
 
+    <!-- Información de resultados -->
+    <div style="margin-top: 1rem; color: var(--text-light);">
+        Mostrando {{ despachos|length }} de {{ paginator.count }} despachos
+    </div>
+
+    <!-- Paginación -->
     {% if is_paginated %}
     <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
         {% if page_obj.has_previous %}
-            <a href="?page=1" class="btn btn-secondary">Primera</a>
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Anterior</a>
+            <a href="?page=1&{{ request.GET.urlencode }}" class="btn btn-secondary">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}" class="btn btn-secondary">Anterior</a>
         {% endif %}
 
         <span style="padding: 0.75rem 1.5rem; background-color: var(--primary-color); color: white; border-radius: 5px;">
@@ -52,17 +119,41 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Siguiente</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary">Última</a>
+            <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}" class="btn btn-secondary">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode }}" class="btn btn-secondary">Última</a>
         {% endif %}
     </div>
     {% endif %}
 
     {% else %}
     <div style="text-align: center; padding: 3rem; background-color: var(--bg-light); border-radius: 8px;">
-        <p style="font-size: 1.2rem; color: var(--text-light);">No hay despachos registrados</p>
-        <a href="{% url 'despacho-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primer/a despacho</a>
+        <p style="font-size: 1.2rem; color: var(--text-light);">No se encontraron despachos con los filtros aplicados</p>
+        <a href="/despachos/" class="btn btn-secondary" style="margin-top: 1rem;">Limpiar filtros</a>
+        <a href="{% url 'despacho-create' %}" class="btn btn-primary" style="margin-top: 1rem;">Crear primer despacho</a>
     </div>
     {% endif %}
 </div>
+
+<style>
+    /* Estilos para el formulario de filtros */
+    form p {
+        margin-bottom: 0;
+    }
+    form p label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    form p input[type="text"],
+    form p input[type="number"],
+    form p input[type="date"],
+    form p select {
+        width: 100%;
+    }
+    form p input[type="checkbox"] {
+        width: auto;
+        margin-right: 0.5rem;
+    }
+</style>
 {% endblock %}

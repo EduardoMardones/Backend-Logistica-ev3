@@ -3,72 +3,267 @@
 {% block title %}Inicio - Logística Global Ltda.{% endblock %}
 
 {% block content %}
-<div class="card">
-    <h1 class="card-title">Bienvenido a Logística Global Ltda.</h1>
-    <p style="font-size: 1.1rem; color: var(--text-light); margin-bottom: 2rem;">
-        Sistema integral de gestión de transporte terrestre y aéreo
-    </p>
-
-    <!-- Estadísticas -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-        <div style="background: linear-gradient(135deg, #3b82f6, #1e3a8a); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
-            <div style="font-size: 3rem; font-weight: bold;">{{ total_vehiculos }}</div>
-            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Vehículos Activos</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
-            <div style="font-size: 3rem; font-weight: bold;">{{ total_aeronaves }}</div>
-            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Aeronaves Activas</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
-            <div style="font-size: 3rem; font-weight: bold;">{{ total_conductores }}</div>
-            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Conductores</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
-            <div style="font-size: 3rem; font-weight: bold;">{{ total_pilotos }}</div>
-            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Pilotos</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
-            <div style="font-size: 3rem; font-weight: bold;">{{ total_despachos }}</div>
-            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Total Despachos</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #ec4899, #db2777); color: white; padding: 2rem; border-radius: 8px; text-align: center;">
-            <div style="font-size: 3rem; font-weight: bold;">{{ despachos_pendientes }}</div>
-            <div style="font-size: 1.2rem; margin-top: 0.5rem;">Despachos Pendientes</div>
+<!-- Hero Section con Bootstrap -->
+<div class="container-fluid mb-4" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 3rem 0; border-radius: 15px;">
+    <div class="container">
+        <div class="row align-items-center text-white">
+            <div class="col-md-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="bi bi-truck"></i> Bienvenido a Logística Global Ltda.
+                </h1>
+                <p class="lead">Sistema integral de gestión de transporte terrestre y aéreo</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-globe" style="font-size: 8rem; opacity: 0.3;"></i>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <h2 class="card-title">Accesos Rápidos</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-        <a href="/despachos/crear/" class="btn btn-primary" style="text-align: center;">➕ Nuevo Despacho</a>
-        <a href="/vehiculos/" class="btn btn-secondary" style="text-align: center;">🚚 Ver Vehículos</a>
-        <a href="/aeronaves/" class="btn btn-secondary" style="text-align: center;">✈️ Ver Aeronaves</a>
-        <a href="/clientes/" class="btn btn-secondary" style="text-align: center;">👥 Ver Clientes</a>
+<!-- Estadísticas con Bootstrap Cards -->
+<div class="container">
+    <h2 class="mb-4 text-center">
+        <i class="bi bi-bar-chart-fill"></i> Panel de Control
+    </h2>
+    
+    <div class="row g-4">
+        <!-- Card Vehículos -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-primary bg-gradient mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-truck-front text-white" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="card-title display-4 fw-bold text-primary">{{ total_vehiculos }}</h3>
+                    <p class="card-text text-muted fs-5">Vehículos Activos</p>
+                    <a href="/vehiculos/" class="btn btn-outline-primary btn-sm mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Ver Todos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Aeronaves -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-success bg-gradient mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-airplane text-white" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="card-title display-4 fw-bold text-success">{{ total_aeronaves }}</h3>
+                    <p class="card-text text-muted fs-5">Aeronaves Activas</p>
+                    <a href="/aeronaves/" class="btn btn-outline-success btn-sm mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Ver Todas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Conductores -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-warning bg-gradient mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-person-badge text-white" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="card-title display-4 fw-bold text-warning">{{ total_conductores }}</h3>
+                    <p class="card-text text-muted fs-5">Conductores</p>
+                    {% if user.is_staff %}
+                    <a href="/conductores/" class="btn btn-outline-warning btn-sm mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Ver Todos
+                    </a>
+                    {% else %}
+                    <span class="badge bg-secondary mt-2">Solo Admin</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Pilotos -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-info bg-gradient mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-person-arms-up text-white" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="card-title display-4 fw-bold text-info">{{ total_pilotos }}</h3>
+                    <p class="card-text text-muted fs-5">Pilotos</p>
+                    {% if user.is_staff %}
+                    <a href="/pilotos/" class="btn btn-outline-info btn-sm mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Ver Todos
+                    </a>
+                    {% else %}
+                    <span class="badge bg-secondary mt-2">Solo Admin</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Total Despachos -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-danger bg-gradient mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-clipboard-check text-white" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="card-title display-4 fw-bold text-danger">{{ total_despachos }}</h3>
+                    <p class="card-text text-muted fs-5">Total Despachos</p>
+                    <a href="/despachos/" class="btn btn-outline-danger btn-sm mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Ver Todos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Despachos Pendientes -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777);">
+                        <i class="bi bi-clock-history text-white" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="card-title display-4 fw-bold" style="color: #ec4899;">{{ despachos_pendientes }}</h3>
+                    <p class="card-text text-muted fs-5">Despachos Pendientes</p>
+                    <a href="/despachos/?estado=PENDIENTE" class="btn btn-sm mt-2" style="color: #ec4899; border-color: #ec4899;">
+                        <i class="bi bi-arrow-right-circle"></i> Ver Pendientes
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<div class="card">
-    <h2 class="card-title">Sobre el Sistema</h2>
-    <p style="line-height: 1.8; color: var(--text-light);">
-        Logística Global Ltda. ofrece una plataforma completa para la gestión de operaciones de transporte. 
-        Nuestro sistema permite administrar flotas terrestres y aéreas, gestionar personal operativo, 
-        controlar rutas y realizar seguimiento detallado de cada despacho.
-    </p>
-    <div style="margin-top: 1.5rem;">
-        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Características principales:</h3>
-        <ul style="list-style-position: inside; color: var(--text-light); line-height: 2;">
-            <li>Gestión integral de vehículos y aeronaves</li>
-            <li>Control de conductores y pilotos certificados</li>
-            <li>Administración de rutas terrestres y aéreas</li>
-            <li>Seguimiento de despachos en tiempo real</li>
-            <li>Registro detallado de cargas y clientes</li>
-            <li>API REST para integración con otros sistemas</li>
-        </ul>
+
+<!-- Accesos Rápidos -->
+<div class="container mt-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                <i class="bi bi-lightning-charge-fill"></i> Accesos Rápidos
+            </h3>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <a href="/despachos/crear/" class="btn btn-primary w-100 py-3">
+                        <i class="bi bi-plus-circle fs-4 d-block mb-2"></i>
+                        Nuevo Despacho
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="/vehiculos/" class="btn btn-outline-primary w-100 py-3">
+                        <i class="bi bi-truck fs-4 d-block mb-2"></i>
+                        Ver Vehículos
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="/aeronaves/" class="btn btn-outline-primary w-100 py-3">
+                        <i class="bi bi-airplane fs-4 d-block mb-2"></i>
+                        Ver Aeronaves
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="/clientes/" class="btn btn-outline-primary w-100 py-3">
+                        <i class="bi bi-people fs-4 d-block mb-2"></i>
+                        Ver Clientes
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Sobre el Sistema -->
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h3 class="mb-0">
+                        <i class="bi bi-info-circle-fill text-primary"></i> Sobre el Sistema
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead">
+                        Logística Global Ltda. ofrece una plataforma completa para la gestión de operaciones de transporte. 
+                        Nuestro sistema permite administrar flotas terrestres y aéreas, gestionar personal operativo, 
+                        controlar rutas y realizar seguimiento detallado de cada despacho.
+                    </p>
+                    
+                    <h5 class="text-primary mt-4 mb-3">
+                        <i class="bi bi-star-fill"></i> Características principales:
+                    </h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Gestión integral de vehículos y aeronaves
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Control de conductores y pilotos certificados
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Administración de rutas terrestres y aéreas
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Seguimiento de despachos en tiempo real
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Registro detallado de cargas y clientes
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            API REST para integración con otros sistemas
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-shield-check text-primary" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">Sistema Seguro</h5>
+                    <p class="text-muted small">Autenticación JWT y control de acceso por roles</p>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-speedometer2 text-success" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">Alto Rendimiento</h5>
+                    <p class="text-muted small">Optimizado para manejar grandes volúmenes de datos</p>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-phone text-info" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">Responsive</h5>
+                    <p class="text-muted small">Accede desde cualquier dispositivo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+</style>
 {% endblock %}

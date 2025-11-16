@@ -5,9 +5,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from rest_framework import permissions
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from transporte import views
+from transporte import auth_views
 
 # Router para la API REST (con prefijo 'api/')
 router = DefaultRouter()
@@ -28,15 +34,20 @@ schema_view = get_schema_view(
         description="""
         API REST para el sistema de gestión de Logística Global Ltda.
         
+        ## Autenticación JWT:
+        Esta API utiliza JWT (JSON Web Tokens) para autenticación.
+        
+        ### Para obtener tokens:
+        1. POST a `/api/auth/token/` con username y password
+        2. Recibirás un `access` token y un `refresh` token
+        3. Usa el `access` token en el header: `Authorization: Bearer <token>`
+        
         ## Características:
         - Gestión de vehículos y aeronaves
-        - Control de conductores y pilotos
+        - Control de conductores y pilotos (requiere admin)
         - Administración de rutas
-        - Registro de despachos y cargas
-        - Control de clientes
-        
-        ## Autenticación:
-        Algunas rutas requieren autenticación JWT.
+        - Registro de despachos (requiere autenticación)
+        - Control de clientes y cargas
         """,
         terms_of_service="https://www.logisticaglobal.cl/terms/",
         contact=openapi.Contact(email="contacto@logisticaglobal.cl"),
@@ -48,6 +59,12 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # ==================== AUTENTICACIÓN (Vistas HTML) ====================
+    path('login/', auth_views.login_view, name='login'),
+    path('register/', auth_views.register_view, name='register'),
+    path('logout/', auth_views.logout_view, name='logout'),
+    path('profile/', auth_views.profile_view, name='profile'),
     
     # ==================== VISTAS HTML (Frontend) ====================
     # Home
@@ -103,6 +120,11 @@ urlpatterns = [
     
     # ==================== API REST (con prefijo /api/) ====================
     path('api/', include((router.urls, 'transporte_api'), namespace='api')),
+    
+    # ==================== API DE AUTENTICACIÓN JWT ====================
+    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     
     # ==================== DOCUMENTACIÓN API ====================
     # Swagger UI

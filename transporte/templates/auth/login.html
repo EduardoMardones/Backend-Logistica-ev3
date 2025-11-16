@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - Logística Global{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 3rem auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🔐</div>
+            <h1 class="card-title">Iniciar Sesión</h1>
+            <p style="color: var(--text-light);">Accede a tu cuenta de Logística Global</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1.5rem;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-control" 
+                    placeholder="Ingresa tu usuario"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-control" 
+                    placeholder="Ingresa tu contraseña"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
+                🔓 Iniciar Sesión
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--bg-light);">
+            <p style="color: var(--text-light);">
+                ¿No tienes una cuenta? 
+                <a href="{% url 'register' %}" style="color: var(--secondary-color); font-weight: bold; text-decoration: none;">
+                    Regístrate aquí
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem; color: var(--text-light);">
+        <a href="{% url 'home' %}" style="color: var(--text-light); text-decoration: none;">
+            ← Volver al inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

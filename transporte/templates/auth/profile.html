@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil - Logística Global{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <div class="card">
+        <h1 class="card-title">👤 Mi Perfil</h1>
+        
+        <div style="background-color: var(--bg-light); padding: 2rem; border-radius: 8px; margin-top: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Información Personal</h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="color: var(--text-dark);">Nombre Completo:</strong>
+                        <p style="color: var(--text-light); margin-top: 0.25rem;">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="color: var(--text-dark);">Usuario:</strong>
+                        <p style="color: var(--text-light); margin-top: 0.25rem;">
+                            {{ user.username }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="color: var(--text-dark);">Email:</strong>
+                        <p style="color: var(--text-light); margin-top: 0.25rem;">
+                            {{ user.email }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Permisos y Roles</h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="color: var(--text-dark);">Tipo de Usuario:</strong>
+                        <p style="margin-top: 0.25rem;">
+                            {% if user.is_superuser %}
+                                <span style="background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                                    👑 Super Administrador
+                                </span>
+                            {% elif user.is_staff %}
+                                <span style="background-color: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                                    ⭐ Administrador
+                                </span>
+                            {% else %}
+                                <span style="background-color: #3b82f6; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">
+                                    👤 Usuario Normal
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="color: var(--text-dark);">Fecha de Registro:</strong>
+                        <p style="color: var(--text-light); margin-top: 0.25rem;">
+                            {{ user.date_joined|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="color: var(--text-dark);">Último Acceso:</strong>
+                        <p style="color: var(--text-light); margin-top: 0.25rem;">
+                            {{ user.last_login|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Acciones</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    🏠 Volver al Inicio
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-danger">
+                    🚪 Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {% if user.is_staff %}
+    <div class="card" style="margin-top: 2rem;">
+        <h2 class="card-title">⚙️ Accesos Administrativos</h2>
+        <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+            Como administrador, tienes acceso a funciones especiales del sistema.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <a href="/admin/" class="btn btn-secondary" style="text-align: center;">
+                🔧 Panel de Administración Django
+            </a>
+            <a href="{% url 'conductor-list' %}" class="btn btn-secondary" style="text-align: center;">
+                🚗 Gestionar Conductores
+            </a>
+            <a href="{% url 'piloto-list' %}" class="btn btn-secondary" style="text-align: center;">
+                ✈️ Gestionar Pilotos
+            </a>
+            <a href="/redoc/" class="btn btn-secondary" style="text-align: center;" target="_blank">
+                📚 Documentación API
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
